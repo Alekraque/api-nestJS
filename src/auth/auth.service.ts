@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt-ts';
 import { UsersService } from 'src/users/users.service';
-import { AuthDTO } from './dto/create-auth.dto';
+import { AuthDTO } from './dto/auth.dto';
 
 
 interface SignInResponse {
