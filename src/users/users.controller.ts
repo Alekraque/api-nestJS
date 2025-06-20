@@ -15,11 +15,13 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { UserEntity } from './entities/user.entity'
 import { Response } from 'express'
 import { AuthGuard } from 'src/auth/AuthGuard/authGuard'
+import { Public } from 'src/auth/constants/constants'
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.create(createUserDto)
@@ -41,6 +43,7 @@ export class UsersController {
     })
   }
 
+  @UseGuards(AuthGuard)  
   @Get(':id')
   async findOne(
     @Param('id') id: string,
@@ -57,11 +60,15 @@ export class UsersController {
     })
   }
 
+
+  @UseGuards(AuthGuard)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto)
   }
 
+
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(
     @Param('id') id: string,
