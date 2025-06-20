@@ -4,7 +4,6 @@ import { UpdateClientDto } from './dto/update-client.dto'
 import { ClientEntity } from './entities/client.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ILike, Repository } from 'typeorm'
-import { userInfo } from 'os'
 
 @Injectable()
 export class ClientsService {
@@ -67,7 +66,8 @@ export class ClientsService {
   async remove(id: string, user_id: string) {
     const removeClient = await this.clientRepository.findOne({
       where: {
-        id: id
+        id: id,
+        user_id: user_id
       }
     })
 
