@@ -10,15 +10,13 @@ import {
   Query,
   Request,
   UseGuards,
+  Req,
 } from '@nestjs/common'
 import { ClientsService } from './clients.service'
 import { CreateClientDto } from './dto/create-client.dto'
 import { UpdateClientDto } from './dto/update-client.dto'
 import { Response } from 'express'
-import {
-  checkEmptyObject,
-  checkEmptyResponse,
-} from 'src/utils/checkEmptyResponse'
+import { checkEmptyObject, checkEmptyResponse } from 'src/utils/checkEmptyResponse'
 import { ClientEntity } from './entities/client.entity'
 import { AuthGuard } from 'src/auth/AuthGuard/authGuard'
 
@@ -34,6 +32,7 @@ export class ClientsController {
     return this.clientsService.create(id, createClientDto)
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Res() res: Response): Promise<Response> {
     const allClients: ClientEntity[] = await this.clientsService.findAll()
@@ -53,7 +52,6 @@ export class ClientsController {
     @Res() res: Response,
   ): Promise<Response> {
     const user_id = req.user.id
-    console.log(req.user)
     const clientsUser = await this.clientsService.findAllByUserId(user_id, name)
 
     return checkEmptyResponse<ClientEntity>(
@@ -63,12 +61,15 @@ export class ClientsController {
     )
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(
     @Param('id') id: string,
     @Res() res: Response,
+    @Req() req: any
   ): Promise<Response> {
-    const oneClient: ClientEntity | null = await this.clientsService.findOne(id)
+    const user_id = req.user.id
+    const oneClient: ClientEntity | null = await this.clientsService.findOne(id, user_id)
 
     return checkEmptyObject<ClientEntity>(
       res,
@@ -77,20 +78,27 @@ export class ClientsController {
     )
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,
+    @Req() req: any
   ) {
+    const user_id = req.user.id
     const updatedUser = await this.clientsService.updateClient(
       id,
       updateClientDto,
+      user_id
     )
     return updatedUser
   }
 
+
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientsService.remove(id)
+  remove(@Param('id') id: string, @Req() req: any) {
+    const user_id = req.user.id
+    return this.clientsService.remove(id, user_id)
   }
 }
