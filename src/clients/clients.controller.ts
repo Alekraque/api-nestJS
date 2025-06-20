@@ -97,8 +97,35 @@ export class ClientsController {
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: any) {
+  async remove(@Param('id') id: string, @Req() req: any, @Res() res: Response):Promise<Response> {
     const user_id = req.user.id
-    return this.clientsService.remove(id, user_id)
+    if (!id) {
+      return res.status(404).json({
+        errorMessage: 'ID nao inserido',
+      })
+    }
+
+    const removeClient = await this.clientsService.findOne(id, user_id)
+    if (removeClient === null) {
+      return res.status(404).json({
+        errorMessage: 'usuario nao encontrado',
+      })
+    }
+
+
+    try {
+      await this.clientsService.remove(id, user_id)
+      const { name, email } = removeClient
+      return res.status(200).json({
+        message: 'usuario deletado com sucesso',
+        user: { name, email },
+      })
+    } catch (error) {
+      return res.status(500).json({
+        errorMessage: 'Erro interno do servidor',
+      })
+    }
+
+
   }
 }
