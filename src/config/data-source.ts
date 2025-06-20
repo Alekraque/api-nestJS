@@ -1,7 +1,7 @@
 // src/config/data-source.ts
-import 'reflect-metadata';
-import { DataSource } from 'typeorm';
-import * as dotenv from 'dotenv';
+import 'reflect-metadata'
+import { DataSource } from 'typeorm'
+import * as dotenv from 'dotenv'
 
 dotenv.config()
 
@@ -16,4 +16,4 @@ export const AppDataSource = new DataSource({
   migrations: ['src/config/migrations/*.{ts,js}'],
   synchronize: false,
   migrationsRun: false,
-});
+})

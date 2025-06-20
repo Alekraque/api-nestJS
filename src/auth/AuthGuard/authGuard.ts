@@ -3,16 +3,16 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
-import { jwtConstants } from '../constants/constants';
+} from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
+import { JwtService } from '@nestjs/jwt'
+import { Request } from 'express'
+import { jwtConstants } from '../constants/constants'
 
 interface JwtPayload {
-    email: string
-    role?: string
-    id: string
+  email: string
+  role?: string
+  id: string
 }
 
 @Injectable()
@@ -26,36 +26,36 @@ export class AuthGuard implements CanActivate {
     const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
       context.getHandler(),
       context.getClass(),
-    ]);
+    ])
 
     if (isPublic) {
-      return true;
+      return true
     }
 
-    const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeaders(request);
+    const request = context.switchToHttp().getRequest<Request>()
+    const token = this.extractTokenFromHeaders(request)
 
     if (token === undefined || token === null || token.trim() === '') {
-      throw new UnauthorizedException('Token not found');
+      throw new UnauthorizedException('Token not found')
     }
 
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: jwtConstants.secret,
-      });
-      request['user'] = payload;
+      })
+      request['user'] = payload
     } catch (error: unknown) {
       if (error instanceof Error) {
-        throw new UnauthorizedException(error.message);
+        throw new UnauthorizedException(error.message)
       }
-      throw new UnauthorizedException('An unknown error occurred');
+      throw new UnauthorizedException('An unknown error occurred')
     }
 
-    return true;
+    return true
   }
 
   private extractTokenFromHeaders(request: Request): string | undefined {
-    const [type, token] = request.headers['authorization']?.split(' ') || [];
-    return type === 'Bearer' ? token : undefined;
+    const [type, token] = request.headers['authorization']?.split(' ') || []
+    return type === 'Bearer' ? token : undefined
   }
 }

@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateUserTable1750087232288 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(new Table({
-        name: "users",
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: 'users',
         columns: [
           {
             name: 'id',
@@ -12,23 +12,22 @@ export class CreateUserTable1750087232288 implements MigrationInterface {
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()'
+            default: 'uuid_generate_v4()',
           },
 
           {
-            name:"name",
+            name: 'name',
             type: 'varchar',
             length: '255',
-            isNullable: false
+            isNullable: false,
           },
 
-
           {
-            name: "email",
+            name: 'email',
             type: 'varchar',
             length: '255',
             isUnique: true,
-            isNullable: false
+            isNullable: false,
           },
           {
             name: 'cpf',
@@ -45,11 +44,11 @@ export class CreateUserTable1750087232288 implements MigrationInterface {
           },
 
           {
-          name: 'created_at',
-          type: 'timestamp',
-          default: 'now()',
-          isNullable: false,
-        },
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+            isNullable: false,
+          },
 
           {
             name: 'updated_at',
@@ -57,12 +56,12 @@ export class CreateUserTable1750087232288 implements MigrationInterface {
             default: 'now()',
             isNullable: false,
           },
-        ]
-      }))
-    }
+        ],
+      }),
+    )
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('users')
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('users')
+  }
 }

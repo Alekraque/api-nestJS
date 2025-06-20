@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class CreateClientTable1750181791570 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(new Table({
-        name: "clients",
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: 'clients',
         columns: [
           {
             name: 'id',
@@ -12,44 +12,43 @@ export class CreateClientTable1750181791570 implements MigrationInterface {
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()'
+            default: 'uuid_generate_v4()',
           },
 
           {
-              name: 'user_id',
-              type: 'uuid',
-              isNullable: false
+            name: 'user_id',
+            type: 'uuid',
+            isNullable: false,
           },
 
           {
-            name:"name",
+            name: 'name',
             type: 'varchar',
             length: '255',
-            isNullable: false
+            isNullable: false,
           },
 
-
           {
-            name: "email",
+            name: 'email',
             type: 'varchar',
             length: '255',
             isUnique: true,
-            isNullable: false
+            isNullable: false,
           },
 
           {
-             name: "telefone",
-             type: "varchar",
-             length: "50",
-             isNullable: false
+            name: 'telefone',
+            type: 'varchar',
+            length: '50',
+            isNullable: false,
           },
 
           {
-          name: 'created_at',
-          type: 'timestamp',
-          default: 'now()',
-          isNullable: false,
-        },
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
+            isNullable: false,
+          },
 
           {
             name: 'updated_at',
@@ -64,14 +63,14 @@ export class CreateClientTable1750181791570 implements MigrationInterface {
             columnNames: ['user_id'],
             referencedTableName: 'users',
             referencedColumnNames: ['id'],
-            onDelete: 'CASCADE'
-          }
-        ]
-      }))
-    }
+            onDelete: 'CASCADE',
+          },
+        ],
+      }),
+    )
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('clients')
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('clients')
+  }
 }

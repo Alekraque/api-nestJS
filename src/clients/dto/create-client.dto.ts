@@ -1,6 +1,11 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length } from 'class-validator'
-
-
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  Length,
+} from 'class-validator'
 
 export class CreateClientDto {
   @IsString({ message: 'O nome deve ser um conjunto de letras' })
@@ -14,9 +19,11 @@ export class CreateClientDto {
 
   @IsNotEmpty({ message: 'Telefone é obrigatório' })
   @IsString({ message: 'Telefone deve ser uma string' })
-  @IsPhoneNumber('BR', { message: 'Telefone deve estar no formato +55 11 12345-6789' })
+  @IsPhoneNumber('BR', {
+    message: 'Telefone deve estar no formato +55 11 12345-6789',
+  })
   telefone: string
-  
+
   @IsNotEmpty({ message: 'Role é obrigatória' })
   @IsString({ message: 'Role deve ser uma string' })
   role: string

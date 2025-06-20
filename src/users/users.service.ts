@@ -8,13 +8,12 @@ import { HashPassword } from 'src/utils/hashPassword'
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(UserEntity)
     private readonly usuarioRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto):Promise<UserEntity> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     createUserDto.password = await HashPassword(createUserDto.password)
     return await this.usuarioRepository.save(createUserDto)
   }
@@ -24,7 +23,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    return await this.usuarioRepository.findOneBy({id})
+    return await this.usuarioRepository.findOneBy({ id })
   }
 
   async findOneByEmail(email: string): Promise<UserEntity | null> {

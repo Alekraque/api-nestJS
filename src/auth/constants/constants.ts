@@ -1,10 +1,9 @@
-import { SetMetadata } from "@nestjs/common"
-
+import { SetMetadata } from '@nestjs/common'
 
 export const jwtConstants = {
-    secret: "secretKey",
-
+  secret: 'secretKey',
 }
 
 export const IS_PUBLIC_KEY = 'isPublic'
-export const Public = (): ReturnType<typeof SetMetadata> => SetMetadata(IS_PUBLIC_KEY, true)
+export const Public = (): ReturnType<typeof SetMetadata> =>
+  SetMetadata(IS_PUBLIC_KEY, true)

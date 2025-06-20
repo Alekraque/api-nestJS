@@ -1,48 +1,59 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Res, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
-import { Response } from 'express';
-import { AuthGuard } from 'src/auth/AuthGuard/authGuard';
-
-
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
+import { UsersService } from './users.service'
+import { CreateUserDto } from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { UserEntity } from './entities/user.entity'
+import { Response } from 'express'
+import { AuthGuard } from 'src/auth/AuthGuard/authGuard'
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto):Promise<UserEntity> {
+  create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.create(createUserDto)
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Res() res: Response):Promise<Response> {
+  async findAll(@Res() res: Response): Promise<Response> {
     const allUsers = await this.usersService.findAllUsers()
 
     if (!allUsers || allUsers.length === 0) {
       return res.status(404).json({
-        errorMessage: "Nenhum usuario encontrado"
+        errorMessage: 'Nenhum usuario encontrado',
       })
     }
 
     return res.status(200).json({
-      data: allUsers
+      data: allUsers,
     })
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res:Response):Promise<Response> {
+  async findOne(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
     const findUser = await this.usersService.findOne(id)
-    if(!findUser) {
+    if (!findUser) {
       return res.status(404).json({
-        errorMessage: "Esse usuario nao existe"
+        errorMessage: 'Esse usuario nao existe',
       })
     }
     return res.status(200).json({
-      data: findUser
+      data: findUser,
     })
   }
 
@@ -52,32 +63,33 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response):Promise<Response> {
-    
-    if(!id) {
+  async remove(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
+    if (!id) {
       return res.status(404).json({
-        errorMessage: "ID nao inserido"
+        errorMessage: 'ID nao inserido',
       })
     }
 
     const user = await this.usersService.findOne(id)
-    if(user === null) {
+    if (user === null) {
       return res.status(404).json({
-        errorMessage: "usuario nao encontrado"
+        errorMessage: 'usuario nao encontrado',
       })
     }
 
     try {
       await this.usersService.remove(id)
-      const {name, email} = user
+      const { name, email } = user
       return res.status(200).json({
-        message: "usuario deletado com sucesso",
-        user: {name, email}
-      }    
-    )
+        message: 'usuario deletado com sucesso',
+        user: { name, email },
+      })
     } catch (error) {
       return res.status(500).json({
-        errorMessage: "Erro interno do servidor"
+        errorMessage: 'Erro interno do servidor',
       })
     }
   }

@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt-ts';
-import { UsersService } from 'src/users/users.service';
-import { AuthDTO } from './dto/auth.dto';
-
+import { Injectable } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { compare } from 'bcrypt-ts'
+import { UsersService } from 'src/users/users.service'
+import { AuthDTO } from './dto/auth.dto'
 
 interface SignInResponse {
   status?: number
@@ -13,33 +12,32 @@ interface SignInResponse {
 
 @Injectable()
 export class AuthService {
-
   constructor(
-    private readonly userService: UsersService, 
-    private readonly jwtService: JwtService
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(login: AuthDTO):Promise<SignInResponse> {
+  async signIn(login: AuthDTO): Promise<SignInResponse> {
     const user = await this.userService.findOneByEmail(login.email)
-    
-    if(!user) {
+
+    if (!user) {
       return {
         status: 404,
-        errorMessage: "Usuario nao encontrado"
+        errorMessage: 'Usuario nao encontrado',
       }
     }
     const match = await compare(login.password, user.password)
 
-    if(!match) {
+    if (!match) {
       return {
         status: 400,
-        errorMessage: "credenciais invalidas"
+        errorMessage: 'credenciais invalidas',
       }
     }
-    const payload = {id: user.id, username: user.email}
+    const payload = { id: user.id, username: user.email }
     return {
       status: 200,
-      accessToken : await this.jwtService.signAsync(payload)
+      accessToken: await this.jwtService.signAsync(payload),
     }
   }
 }
