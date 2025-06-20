@@ -24,10 +24,6 @@ export class CreateClientDto {
   })
   telefone: string
 
-  @IsNotEmpty({ message: 'Role é obrigatória' })
-  @IsString({ message: 'Role deve ser uma string' })
-  role: string
-
   @IsOptional()
   user_id: string
 }
