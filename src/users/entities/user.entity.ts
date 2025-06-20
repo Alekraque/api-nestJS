@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { ClientEntity } from "src/clients/entities/client.entity"
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 @Entity("users")
 export class UserEntity {
@@ -13,6 +14,15 @@ export class UserEntity {
     email: string
 
     @Column()
+    telefone: string
+
+    @Column()
+    cpf: string
+
+    @Column()
+    role: string
+
+    @Column()
     password: string 
 
     @CreateDateColumn()
@@ -20,5 +30,10 @@ export class UserEntity {
 
     @UpdateDateColumn()
     update_at: string
+
+    
+    @OneToMany(() => ClientEntity, (user) => user.user)
+    @JoinColumn({ name: 'id', referencedColumnName: 'user_id'})
+    client: ClientEntity[]
 
 }

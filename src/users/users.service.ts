@@ -19,13 +19,16 @@ export class UsersService {
     return await this.usuarioRepository.save(createUserDto)
   }
 
-  async findAll() {
+  async findAllUsers() {
     return this.usuarioRepository.find()
   }
 
   async findOne(id: string) {
-    console.log(id)
     return await this.usuarioRepository.findOneBy({id})
+  }
+
+  async findOneByEmail(email: string): Promise<UserEntity | null> {
+    return await this.usuarioRepository.findOneBy({ email })
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {

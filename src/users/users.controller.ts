@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { Response } from 'express';
+import { AuthGuard } from 'src/auth/AuthGuard/authGuard';
+
+
 
 @Controller('users')
 export class UsersController {
@@ -14,14 +17,33 @@ export class UsersController {
     return this.usersService.create(createUserDto)
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@Res() res: Response):Promise<Response> {
+    const allUsers = await this.usersService.findAllUsers()
+
+    if (!allUsers || allUsers.length === 0) {
+      return res.status(404).json({
+        errorMessage: "Nenhum usuario encontrado"
+      })
+    }
+
+    return res.status(200).json({
+      data: allUsers
+    })
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id)
+  async findOne(@Param('id') id: string, @Res() res:Response):Promise<Response> {
+    const findUser = await this.usersService.findOne(id)
+    if(!findUser) {
+      return res.status(404).json({
+        errorMessage: "Esse usuario nao existe"
+      })
+    }
+    return res.status(200).json({
+      data: findUser
+    })
   }
 
   @Put(':id')
@@ -47,9 +69,10 @@ export class UsersController {
 
     try {
       await this.usersService.remove(id)
+      const {name, email} = user
       return res.status(200).json({
         message: "usuario deletado com sucesso",
-        user
+        user: {name, email}
       }    
     )
     } catch (error) {
