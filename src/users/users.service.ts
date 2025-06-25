@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { ILike, Repository } from 'typeorm'
 import { UserEntity } from './entities/user.entity'
 import { HashPassword } from 'src/utils/hashPassword'
 
@@ -15,15 +15,55 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     createUserDto.password = await HashPassword(createUserDto.password)
+    createUserDto.role = createUserDto.role ? createUserDto.role : "user" 
     return await this.usuarioRepository.save(createUserDto)
   }
 
-  async findAllUsers() {
-    return this.usuarioRepository.find()
+  async findAllUsers(
+    name: string,
+    page: number = 1,
+    limitPage: number = 3
+  ): Promise<object> {
+
+    const offset = (page - 1) * limitPage
+
+    const searchUsers = await this.usuarioRepository.find({
+      where: {
+        name: ILike(`%${name}%`),
+        // email: ILike(`%${email}%`)
+      },
+      select: {
+        id: true,
+        name: true,
+        cpf: true,
+        email: true, 
+        role: true
+      },
+      skip: offset,
+      take: limitPage
+    })
+
+    const count = await this.usuarioRepository.count({
+      where: {
+        name: ILike(`%${name}%`)
+      }
+    })
+
+    const totalPage = Math.ceil( count / limitPage )
+    return { 
+      totalPage, 
+      page, 
+      limitPage, 
+      searchUsers 
+    }
+
   }
 
   async findOne(id: string) {
-    return await this.usuarioRepository.findOneBy({ id })
+    return await this.usuarioRepository.findOne({
+      where: { id: id },
+      select: ['name', 'email', 'cpf', 'telefone', 'role' ]
+    })
   }
 
   async findOneByEmail(email: string): Promise<UserEntity | null> {
@@ -35,6 +75,17 @@ export class UsersService {
   }
 
   async remove(id: string) {
+
+    const removeUser = await this.usuarioRepository.findOne({
+      where: {
+        id: id
+      }
+    })
+
+  
+    if (!removeUser) throw new NotFoundException('Cliente não encontrado')  
+
+
     return await this.usuarioRepository.delete(id)
   }
 }

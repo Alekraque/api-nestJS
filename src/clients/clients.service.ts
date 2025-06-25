@@ -5,6 +5,7 @@ import { ClientEntity } from './entities/client.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ILike, Repository } from 'typeorm'
 
+
 @Injectable()
 export class ClientsService {
   constructor(
@@ -27,14 +28,32 @@ export class ClientsService {
   async findAllByUserId(
     user_id: string,
     name: string,
-  ): Promise<ClientEntity[]> {
-    const serachClients = await this.clientRepository.find({
+    page: number = 1,
+    limitPage: number = 3
+  ): Promise<object> {
+
+    const offset = (page - 1) * limitPage
+
+    const searchClients = await this.clientRepository.find({
       where: {
         name: ILike(`%${name}%`),
-        user_id: user_id,
+        user_id
       },
+      select: ['id', 'name', 'user_id'],
+      skip: offset,
+      take: limitPage
     })
-    return serachClients
+    // console.log(searchClients)
+    const count = await this.clientRepository.count({
+      where: {
+        name: ILike(`%${name}%`),
+        user_id
+      }
+    })
+
+    const totalPage = Math.ceil( count == 0 ? 1 : count / limitPage)
+    console.log({ totalPage, page, limitPage, user_id, searchClients })
+    return { totalPage, page, limitPage, user_id, searchClients }
   }
 
   async findOne(id:string, user_id: string) {

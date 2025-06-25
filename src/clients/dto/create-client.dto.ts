@@ -19,9 +19,9 @@ export class CreateClientDto {
 
   @IsNotEmpty({ message: 'Telefone é obrigatório' })
   @IsString({ message: 'Telefone deve ser uma string' })
-  @IsPhoneNumber('BR', {
-    message: 'Telefone deve estar no formato +55 11 12345-6789',
-  })
+  // @IsPhoneNumber('BR', {
+  //   message: 'Telefone deve estar no formato +55 11 12345-6789',
+  // })
   telefone: string
 
   @IsOptional()

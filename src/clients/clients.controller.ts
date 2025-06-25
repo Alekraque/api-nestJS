@@ -25,7 +25,7 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @UseGuards(AuthGuard)
-  @Post()
+  @Post("/create")
   create(@Request() req: any, @Body() createClientDto: CreateClientDto) {
     //tipar corretamente o req
     const id = req.user.id
@@ -49,16 +49,15 @@ export class ClientsController {
   async findAllByUserId(
     @Request() req: any,
     @Query('name') name: string,
+    @Query('page') page: string,
     @Res() res: Response,
   ): Promise<Response> {
     const user_id = req.user.id
-    const clientsUser = await this.clientsService.findAllByUserId(user_id, name)
+    const clientsUser = await this.clientsService.findAllByUserId(String(user_id), String(name), Number(page))
 
-    return checkEmptyResponse<ClientEntity>(
-      res,
-      clientsUser,
-      'Esse usuario nao possui clientes cadastrados',
-    )
+    return res.status(200).json({
+      data: clientsUser
+    })
   }
 
   @UseGuards(AuthGuard)
@@ -70,7 +69,11 @@ export class ClientsController {
   ): Promise<Response> {
     const user_id = req.user.id
     const oneClient: ClientEntity | null = await this.clientsService.findOne(id, user_id)
-
+    if (!oneClient) {
+      return res.status(404).json({
+        errorMessage: 'Esse cliente nao existe',
+      })
+    }
     return checkEmptyObject<ClientEntity>(
       res,
       oneClient,
@@ -79,7 +82,7 @@ export class ClientsController {
   }
 
   @UseGuards(AuthGuard)
-  @Put(':id')
+  @Put('/update/:id')
   async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,
@@ -96,7 +99,7 @@ export class ClientsController {
 
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete('/delete/:id')
   async remove(@Param('id') id: string, @Req() req: any, @Res() res: Response):Promise<Response> {
     const user_id = req.user.id
     if (!id) {

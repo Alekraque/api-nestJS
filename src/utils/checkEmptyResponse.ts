@@ -10,6 +10,8 @@ export function checkEmptyResponse<T>(
   }
 
   return res.status(200).json({ data })
+
+  
 }
 
 export function checkEmptyObject<T>(

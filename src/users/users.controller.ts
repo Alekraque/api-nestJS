@@ -8,6 +8,8 @@ import {
   Put,
   Res,
   UseGuards,
+  Query,
+  Req,
 } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -22,17 +24,23 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Public()
-  @Post()
+  @Post('/create')
   create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.usersService.create(createUserDto)
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Res() res: Response): Promise<Response> {
-    const allUsers = await this.usersService.findAllUsers()
+  async findAll(
+    @Res() res: Response,
+    @Query('name') name: string,
+    @Query('page') page: string,
+  ): Promise<Response> {
+    
 
-    if (!allUsers || allUsers.length === 0) {
+    const allUsers = await this.usersService.findAllUsers(String(name), Number(page))
+
+    if (!allUsers) {
       return res.status(404).json({
         errorMessage: 'Nenhum usuario encontrado',
       })
@@ -62,14 +70,14 @@ export class UsersController {
 
 
   @UseGuards(AuthGuard)
-  @Put(':id')
+  @Put('/update/:id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto)
   }
 
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete('/delete/:id')
   async remove(
     @Param('id') id: string,
     @Res() res: Response,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from 'bcrypt-ts'
 import { UsersService } from 'src/users/users.service'
@@ -21,18 +21,12 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(login.email)
 
     if (!user) {
-      return {
-        status: 404,
-        errorMessage: 'Usuario nao encontrado',
-      }
+      throw new UnauthorizedException('Credenciais inválidas')
     }
     const match = await compare(login.password, user.password)
 
     if (!match) {
-      return {
-        status: 400,
-        errorMessage: 'credenciais invalidas',
-      }
+      throw new UnauthorizedException('Credenciais inválidas')
     }
     const payload = { id: user.id, username: user.email }
     return {

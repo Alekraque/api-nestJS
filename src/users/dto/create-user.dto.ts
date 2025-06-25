@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator'
 import { IsCPF } from 'src/utils/cpf-decorator'
 import { IsPhoneBR } from 'src/utils/phone-decorator'
 
@@ -23,10 +23,10 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'CPF é obrigatório' })
   @IsString({ message: 'CPF deve ser uma string' })
-  @IsCPF({ message: 'CPF deve estar no formato 000.000.000-00' })
+  @IsCPF({ message: 'CPF precisa ser um Formato de CPF valido' })
   cpf: string
 
-  @IsNotEmpty({ message: 'Role é obrigatória' })
+  @IsOptional()
   @IsString({ message: 'Role deve ser uma string' })
-  role: string
+  role?: string
 }
