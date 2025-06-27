@@ -8,6 +8,7 @@ interface SignInResponse {
   status?: number
   accessToken?: string
   errorMessage?: string
+  name: string
 }
 
 @Injectable()
@@ -28,10 +29,11 @@ export class AuthService {
     if (!match) {
       throw new UnauthorizedException('Credenciais inválidas')
     }
-    const payload = { id: user.id, username: user.email }
+    const payload = { id: user.id, email: user.email, role: user.role }
     return {
       status: 200,
       accessToken: await this.jwtService.signAsync(payload),
+      name: user.name
     }
   }
 }

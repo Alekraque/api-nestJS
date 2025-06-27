@@ -1,10 +1,11 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, MinLength } from 'class-validator'
 import { IsCPF } from 'src/utils/cpf-decorator'
 import { IsPhoneBR } from 'src/utils/phone-decorator'
 
 export class CreateUserDto {
   @IsString({ message: 'O nome deve ser um conjunto de letras' })
   @IsNotEmpty({ message: 'O nome é obrigatório' })
+  @Length(3, 40, {message: "Seu nome nao pode exceder 40 caracteres"})
   name: string
 
   @IsEmail({}, { message: 'E-mail inválido' })
